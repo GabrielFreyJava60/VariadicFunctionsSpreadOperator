@@ -1,18 +1,34 @@
-function minMax(...values) {
+function isNumber(value) {
+    return Number.isFinite(value);
+  }
+  
+  function processNumber(num, min, max) {
+    if (isNumber(num)) {
+      min = Math.min(min, num);
+      max = Math.max(max, num);
+    }
+    return [min, max];
+  }
+  
+  function processArray(arr, min, max) {
+    for (let j = 0; j < arr.length; j++) {
+      const num = arr[j];
+      [min, max] = processNumber(num, min, max);
+    }
+    return [min, max];
+  }
+  
+  function minMax(...values) {
     let min = Infinity;
     let max = -Infinity;
   
-    for (const value of values) {
+    for (let i = 0; i < values.length; i++) {
+      const value = values[i];
+  
       if (Array.isArray(value)) {
-        for (const num of value) {
-          if (typeof num === 'number' && !isNaN(num)) {
-            min = Math.min(min, num);
-            max = Math.max(max, num);
-          }
-        }
-      } else if (typeof value === 'number' && !isNaN(value)) {
-        min = Math.min(min, value);
-        max = Math.max(max, value);
+        [min, max] = processArray(value, min, max);
+      } else {
+        [min, max] = processNumber(value, min, max);
       }
     }
   
@@ -22,7 +38,7 @@ function minMax(...values) {
   
     return [min, max];
   }
-
+  
 console.log(`minMax(1, 2, 3) = [${minMax(1, 2, 3)}]`);
 console.log(`minMax(1, 2, 3, [100, 50]) = [${minMax(1, 2, 3, [100, 50])}]`);
 console.log(`minMax(1, 2, 3, [100, 50], [-2, 40, 200]) = [${minMax(1, 2, 3, [100, 50], [-2, 40, 200])}]`);
